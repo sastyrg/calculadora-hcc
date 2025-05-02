@@ -1,4 +1,3 @@
-# Código completo actualizado con interpretaciones y enlaces
 
 import streamlit as st
 import math
