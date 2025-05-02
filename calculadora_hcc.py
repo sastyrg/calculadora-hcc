@@ -4,9 +4,9 @@ import math
 st.set_page_config(page_title="Calculadora HCC", layout="wide")
 
 st.title("Calculadora Integral de Hepatocarcinoma")
-st.markdown("*Dr. Santiago Ramírez Guerrero — Instituto Nacional de Cancerología, CDMX*")
-st.markdown("**Colaboradores:** Andrea P. González, Jessica Sainz, Rodrigo Meléndez, David Gough, Jorge G. Ixtlahuac")
-st.markdown("*@radioresidentes_*")
+st.markdown("*Dr. Santiago Ramírez Guerrero// Dr. Simmons David Gough Coto — Instituto Nacional de Cancerología, CDMX*")
+st.markdown("**Colaboradores:** Drs: Jorge Guerrero Ixtlahuac, Andrea Paola González Rodriguez, Jessica Sainz Castro, Rodrigo Meléndez Coral")
+st.markdown("*Instagram: @radioresidentes_*")
 st.markdown("---")
 
 st.subheader("📝 Ingreso de parámetros clínicos")
