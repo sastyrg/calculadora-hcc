@@ -57,11 +57,13 @@ def calcular_MELD(creat, bilir, inr):
     creat = min(max(creat, 1), 4)
     bilir = max(bilir, 1)
     inr = max(inr, 1)
-    return round(0.957 * math.log(creat) + 0.378 * math.log(bilir) + 1.120 * math.log(inr) + 0.643)
+    meld = 3.78 * math.log(bilir) + 11.2 * math.log(inr) + 9.57 * math.log(creat) + 6.43
+    return round(meld)
 
 def calcular_MELD_Na(meld, sod):
     sod = min(max(sod, 125), 137)
-    return round(meld + 1.32 * (137 - sod) - 0.033 * meld * (137 - sod))
+    meld_na = meld + 1.32 * (137 - sod) - 0.033 * meld * (137 - sod)
+    return round(meld_na)
 
 def calcular_BCLC(size, num, perf):
     if (num == 1 and size <= 5) or (num <= 3 and size <= 3):
