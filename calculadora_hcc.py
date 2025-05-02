@@ -8,20 +8,21 @@ st.set_page_config(page_title="Calculadora HCC - Blanco", layout="wide")
 # Encabezado
 st.markdown("# Calculadora Integral de Hepatocarcinoma")
 st.markdown("*Dr. Santiago Ramírez Guerrero*  ")
-st.markdown("*Dr. Simmons David Gough Coto*  ")
-st.markdown("*Médicos Radiólogos*  ")
-st.markdown("*Fellowships de Radiología Intervencionista*  ")
+st.markdown("*Médico Radiólogo*  ")
+st.markdown("*Fellowship de Radiología Intervencionista*  ")
 st.markdown("*Instituto Nacional de Cancerología, Ciudad de México*  ")
-st.markdown("*@radioresidentes_*  ")
+st.markdown("*RESIDENTES DE RADIOLOGÍA INTERVENCIONISTA INCAN*  ")
 st.markdown("**Con la colaboración de:**  ")
 st.markdown("- González Rodríguez Andrea Paola  ")
 st.markdown("- Sainz Castro Jessica  ")
 st.markdown("- Meléndez Coral Rodrigo  ")
+st.markdown("- Gough Coto Simmons David  ")
 st.markdown("- Jorge Guerrero Ixtlahuac  ")
-# Advertencia
+st.markdown("*@radioresidentes_*  ")
+st.markdown("---")
+
 st.warning("⚠️ Esta herramienta es de apoyo educativo y clínico. No reemplaza la valoración médica integral ni la toma de decisiones clínicas individualizadas.")
 
-# Sidebar para parámetros
 st.sidebar.header("📋 Parámetros Clínicos del Paciente")
 bilirrubina = st.sidebar.number_input("Bilirrubina (mg/dL)", min_value=0.1, step=0.1)
 albumina = st.sidebar.number_input("Albúmina (g/dL)", min_value=0.1, step=0.1)
@@ -39,7 +40,8 @@ respuesta_tumoral = st.sidebar.selectbox("Respuesta tumoral a TACE", ["respuesta
 invasion = st.sidebar.checkbox("Invasión vascular")
 metastasis = st.sidebar.checkbox("Metástasis a distancia")
 
-# Funciones de cálculo
+# Funciones
+
 def calcular_ALBI(bilir, alb):
     bil_umol = bilir * 17.1
     return round(math.log10(bil_umol) - 0.085 * alb, 2)
@@ -65,88 +67,67 @@ def calcular_MELD_Na(meld, sod):
     meld_na = meld + 1.32 * (137 - sod) - 0.033 * meld * (137 - sod)
     return round(meld_na)
 
-def calcular_BCLC(size, num, perf):
+def calcular_BCLC(size, num, perf, inv, met):
+    if perf == "malo" or inv or met:
+        return "Estadio C", "Terapia sistémica / dirigida"
+    if num == 1 and size <= 2:
+        return "Estadio 0", "Resección, RFA o Trasplante"
     if (num == 1 and size <= 5) or (num <= 3 and size <= 3):
-        return "Estadio A", "RFA o TACE"
-    if size > 3 and perf == "bueno":
-        return "Estadio B", "TACE"
-    if perf == "malo":
-        return "Estadio C", "Terapia dirigida"
-    return "Estadio C", "Quimioterapia"
+        return "Estadio A", "Resección, RFA o Trasplante"
+    return "Estadio B", "TACE"
 
-def calcular_Criterios_Milan(size, num):
-    return (num == 1 and size <= 5) or (num <= 3 and size <= 3)
-
-def calcular_Criterios_Toronto(size, num, afp):
-    return size <= 6.5 and num <= 3 and afp <= 400 and not invasion
-
-def calcular_Up7(size, num):
-    return size + num <= 7
-
-def calcular_UNOS(meld):
-    return meld >= 15
-
-def calcular_ART(b0, b1, resp):
-    diff = b1 - b0
-    pts = 1 if diff > 0 else 0
-    pts += 2 if resp == "progresion" else 1 if resp == "estable" else 0
-    return pts
-
-def calcular_Okuda(size, asc, alb, bilir):
-    pts = 1 if size > 50 else 0
-    pts += 1 if asc != "ausente" else 0
-    pts += 1 if alb < 3 else 0
-    pts += 1 if bilir > 3 else 0
-    return pts
-
-def calcular_HKLC(perf, size, num, inv, met):
-    if perf == "bueno" and num <= 3 and size <= 5 and not inv and not met:
-        return "HKLC I"
-    if perf == "bueno" and not met:
-        return "HKLC II/III"
-    if perf == "malo" and met:
-        return "HKLC IV"
-    return "HKLC III/IV"
-
-# Cálculos y visualización
+# Cálculo
 if st.button("Calcular"):
     ALBI = calcular_ALBI(bilirrubina, albumina)
     CP = calcular_ChildPugh(bilirrubina, albumina, INR, ascitis, encefalopatia)
     MELD = calcular_MELD(creatinina, bilirrubina, INR)
     MELD_Na = calcular_MELD_Na(MELD, sodio)
-    BCLC, trat = calcular_BCLC(tamaño_tumor, número_tumores, estado_performance)
-    milan = calcular_Criterios_Milan(tamaño_tumor, número_tumores)
-    toronto = calcular_Criterios_Toronto(tamaño_tumor, número_tumores, AFP)
-    up7 = calcular_Up7(tamaño_tumor, número_tumores)
-    unos = calcular_UNOS(MELD)
-    ART = calcular_ART(bilirrubina, bilirrubina_post, respuesta_tumoral)
-    Ok = calcular_Okuda(tamaño_tumor, ascitis, albumina, bilirrubina)
-    HKLC = calcular_HKLC(estado_performance, tamaño_tumor, número_tumores, invasion, metastasis)
+    BCLC, trat = calcular_BCLC(tamaño_tumor, número_tumores, estado_performance, invasion, metastasis)
 
-    st.header("Resultados de las Escalas")
+    st.header("Resultados")
     st.write(f"- ALBI Score: {ALBI}")
-    st.write(f"- Child-Pugh Score: {CP} (Clase {'A' if CP <= 6 else 'B' if CP <= 9 else 'C'})")
+    with st.expander("Interpretación del ALBI"):
+        st.markdown("""
+        - **Grado 1**: ALBI ≤ -2.60  
+        - **Grado 2**: -2.60 < ALBI ≤ -1.39  
+        - **Grado 3**: ALBI > -1.39  
+        """)
+
+    st.write(f"- Child-Pugh: {CP} (Clase {'A' if CP <= 6 else 'B' if CP <= 9 else 'C'})")
+    with st.expander("Interpretación del Child-Pugh"):
+        st.markdown("""
+        - **Clase A (5-6 puntos):** Buena función hepática, riesgo quirúrgico bajo.  
+        - **Clase B (7-9 puntos):** Función intermedia, riesgo moderado.  
+        - **Clase C (10-15 puntos):** Disfunción grave, contraindicación para cirugía o trasplante.  
+        """)
+
     st.write(f"- MELD Score: {MELD}")
+    with st.expander("Interpretación del MELD"):
+        st.markdown("""
+        - **Supervivencia a 1 año**: 90% en lista de espera vs 83% trasplantado.  
+        - **En sepsis o PBE**: supervivencia a 3 meses ~90%.  
+        - **En TIPS**: mortalidad 1 mes entre 5–25%.  
+        - **MELD 10–19**: bajo riesgo (~90% 3 meses).  
+        - **MELD >20**: riesgo significativo, considerar trasplante urgente.  
+        """)
+
     st.write(f"- MELD-Na Score: {MELD_Na}")
+    with st.expander("Interpretación del MELD-Na"):
+        st.markdown("""
+        - Ajusta el MELD incorporando el sodio, mejorando predicción de mortalidad.  
+        - **Sodio bajo** se asocia a mayor riesgo de muerte en lista de espera.  
+        - Se usa para priorización en trasplante.  
+        """)
+
     st.write(f"- BCLC: {BCLC} → {trat}")
-    st.write(f"- Criterios de Milán: {'✔️' if milan else '❌'}")
-    st.write(f"- Criterios de Toronto: {'✔️' if toronto else '❌'}")
-    st.write(f"- Up-to-7: {'✔️' if up7 else '❌'}")
-    st.write(f"- Elegible UNOS: {'✔️' if unos else '❌'}")
-    st.write(f"- ART Score: {ART}")
-    st.write(f"- Okuda Score: {Ok}")
-    st.write(f"- HKLC: {HKLC}")
+    with st.expander("Tabla de Clasificación BCLC actualizada"):
+        st.markdown("""
+        | Estadio | Características principales | Tratamiento recomendado |
+        |---------|------------------------------|--------------------------|
+        | **0** | Nódulo único ≤2 cm, ECOG 0, función hepática conservada | Resección, RFA o Trasplante |
+        | **A** | Nódulo único ≤5 cm o ≤3 nódulos ≤3 cm, ECOG 0 | Resección, RFA o Trasplante |
+        | **B** | Multinodular, sin invasión ni metástasis, ECOG 0 | TACE |
+        | **C** | Invasión vascular o metástasis o ECOG 1–2 | Terapia sistémica |
+        | **D** | ECOG >2 o Child-Pugh C sin opción a trasplante | Cuidados paliativos |
+        """)
 
-    st.subheader("Comparación de Puntajes")
-    df = pd.DataFrame({
-        'Escala': ['ALBI', 'Child-Pugh', 'MELD', 'MELD-Na', 'ART', 'Okuda'],
-        'Valor': [ALBI, CP, MELD, MELD_Na, ART, Ok]
-    })
-    fig, ax = plt.subplots()
-    ax.barh(df['Escala'], df['Valor'], color='teal')
-    ax.set_xlabel('Puntaje')
-    ax.set_title('Comparación de Escalas')
-    st.pyplot(fig)
-
-# Footer
-st.markdown("---")
