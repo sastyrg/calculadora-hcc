@@ -8,12 +8,16 @@ st.set_page_config(page_title="Calculadora HCC - Blanco", layout="wide")
 # Encabezado
 st.markdown("# Calculadora Integral de Hepatocarcinoma")
 st.markdown("*Dr. Santiago Ramírez Guerrero*  ")
-st.markdown("*Médico Radiólogo*  ")
-st.markdown("*Fellowship de Radiología Intervencionista*  ")
+st.markdown("*Dr. Simmons David Gough Coto*  ")
+st.markdown("*Médicos Radiólogos*  ")
+st.markdown("*Fellowships de Radiología Intervencionista*  ")
 st.markdown("*Instituto Nacional de Cancerología, Ciudad de México*  ")
 st.markdown("*@radioresidentes_*  ")
-st.markdown("---")
-
+st.markdown("**Con la colaboración de:**  ")
+st.markdown("- González Rodríguez Andrea Paola  ")
+st.markdown("- Sainz Castro Jessica  ")
+st.markdown("- Meléndez Coral Rodrigo  ")
+st.markdown("- Jorge Guerrero Ixtlahuac  ")
 # Advertencia
 st.warning("⚠️ Esta herramienta es de apoyo educativo y clínico. No reemplaza la valoración médica integral ni la toma de decisiones clínicas individualizadas.")
 
