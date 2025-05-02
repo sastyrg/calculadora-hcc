@@ -4,8 +4,8 @@ import math
 st.set_page_config(page_title="Calculadora HCC", layout="wide")
 
 st.title("Calculadora Integral de Hepatocarcinoma")
-st.markdown("*Dr. Santiago Ramírez Guerrero, Dr. Simmons David Gough — Instituto Nacional de Cancerología, CDMX*  ")
-st.markdown("**Colaboradores:** Andrea P. González, Jessica Sainz, Rodrigo Meléndez, Jorge G. Ixtlahuac  ")
+st.markdown("*Dr. Santiago Ramírez Guerrero — Instituto Nacional de Cancerología, CDMX*")
+st.markdown("**Colaboradores:** Andrea P. González, Jessica Sainz, Rodrigo Meléndez, David Gough, Jorge G. Ixtlahuac")
 st.markdown("*@radioresidentes_*")
 st.markdown("---")
 
@@ -34,7 +34,7 @@ bilirrubina_post = st.number_input("Bilirrubina post-TACE (mg/dL)", min_value=0.
 
 st.markdown("---")
 
-# Funciones de cálculo
+# Funciones
 def calcular_ALBI(bilir, alb):
     return round(math.log10(bilir * 17.1) - 0.085 * alb, 2)
 
@@ -67,8 +67,7 @@ def calcular_BCLC(size, num, perf, inv, met):
     return "Estadio B", "TACE"
 
 def calcular_Okuda(size, asc, alb, bilir):
-    score = int(size > 50) + int(asc != "ausente") + int(alb < 3) + int(bilir > 3)
-    return score
+    return int(size > 50) + int(asc != "ausente") + int(alb < 3) + int(bilir > 3)
 
 def calcular_ART(b0, b1, resp):
     puntos = int(b1 > b0)
@@ -99,53 +98,82 @@ if st.button("Calcular"):
     hklc = calcular_HKLC(estado_performance, tamaño_tumor, número_tumores, invasion, metastasis)
     clip = calcular_CLIP(bilirrubina, albumina, ascitis, tamaño_tumor)
 
-    st.markdown("## 📊 Resultados")
+    st.subheader("📊 Resultados")
+
     st.write(f"**ALBI Score:** {albi}")
     with st.expander("Interpretación del ALBI"):
-        st.markdown(\"\"\"- Grado 1: ALBI ≤ -2.60  
+        st.markdown("""
+- Grado 1: ALBI ≤ -2.60  
 - Grado 2: -2.60 < ALBI ≤ -1.39  
 - Grado 3: ALBI > -1.39  
-[Ver fuente](https://pubmed.ncbi.nlm.nih.gov/25512453/)\"\"\")
+[Ver fuente](https://pubmed.ncbi.nlm.nih.gov/25512453/)
+""")
+
     st.write(f"**Child-Pugh:** {cp}")
     with st.expander("Interpretación del Child-Pugh"):
-        st.markdown(\"\"\"- Clase A (5–6): Buena función hepática  
+        st.markdown("""
+- Clase A (5–6): Buena función hepática  
 - Clase B (7–9): Disfunción moderada  
 - Clase C (10–15): Disfunción grave  
-[Ver fuente](https://www.ncbi.nlm.nih.gov/books/NBK542308/)\"\"\")
+[Ver fuente](https://www.ncbi.nlm.nih.gov/books/NBK542308/)
+""")
+
     st.write(f"**MELD Score:** {meld}")
     with st.expander("Interpretación del MELD"):
-        st.markdown(\"\"\"- MELD >15 indica necesidad de trasplante  
+        st.markdown("""
+- MELD >15 indica necesidad de trasplante  
 - Se usa para priorización de órganos  
-[Ver fuente](https://pubmed.ncbi.nlm.nih.gov/11172350/)\"\"\")
+[Ver fuente](https://pubmed.ncbi.nlm.nih.gov/11172350/)
+""")
+
     st.write(f"**MELD-Na Score:** {meld_na}")
     with st.expander("Interpretación del MELD-Na"):
-        st.markdown(\"\"\"- Incluye el sodio en el cálculo para mejorar la predicción  
-- Mejora precisión en lista de espera  
-[Ver fuente](https://pubmed.ncbi.nlm.nih.gov/18768945/)\"\"\")
+        st.markdown("""
+- Incluye el sodio para mejorar predicción  
+- Mejora estratificación en lista de espera  
+[Ver fuente](https://pubmed.ncbi.nlm.nih.gov/18768945/)
+""")
+
     st.write(f"**BCLC:** {bclc} → {trat}")
     with st.expander("Interpretación del BCLC"):
-        st.markdown(\"\"\"- 0: único ≤2 cm, ECOG 0  
+        st.markdown("""
+- 0: único ≤2 cm, ECOG 0  
 - A: ≤3 nódulos ≤3 cm o uno ≤5 cm  
 - B: Multinodular sin metástasis  
-- C: Invasión vascular, metástasis, o ECOG ≥1  
-[Ver fuente](https://www.journal-of-hepatology.eu/article/S0168-8278(24)02508-X/abstract)\"\"\")
+- C: Invasión vascular, metástasis o ECOG ≥1  
+[Ver fuente](https://www.journal-of-hepatology.eu/article/S0168-8278(24)02508-X/abstract)
+""")
+
     st.write(f"**Okuda Score:** {okuda}")
     with st.expander("Interpretación del Okuda"):
-        st.markdown(\"\"\"- Estadio I (0–1), II (2), III (3–4)  
-[Ver fuente](https://pubmed.ncbi.nlm.nih.gov/2990661/)\"\"\")
+        st.markdown("""
+- Estadio I: 0–1 puntos  
+- Estadio II: 2 puntos  
+- Estadio III: 3–4 puntos  
+[Ver fuente](https://pubmed.ncbi.nlm.nih.gov/2990661/)
+""")
+
     st.write(f"**ART Score:** {art} ({'Alto riesgo' if art >= 2 else 'Bajo riesgo'})")
     with st.expander("Interpretación del ART"):
-        st.markdown(\"\"\"- 0–1 puntos: puede repetirse TACE  
-- ≥2 puntos: alto riesgo, considerar sistémica  
-[Ver fuente](https://pubmed.ncbi.nlm.nih.gov/23316013/)\"\"\")
+        st.markdown("""
+- 0–1 puntos: repetir TACE  
+- ≥2 puntos: alto riesgo, considerar terapia sistémica  
+[Ver fuente](https://pubmed.ncbi.nlm.nih.gov/23316013/)
+""")
+
     st.write(f"**HKLC:** {hklc}")
     with st.expander("Interpretación del HKLC"):
-        st.markdown(\"\"\"- I–II: tratamientos curativos  
-- III–IV: enfermedad avanzada  
-[Ver fuente](https://pubmed.ncbi.nlm.nih.gov/24583061/)\"\"\")
+        st.markdown("""
+- I–II: Tratamientos curativos posibles  
+- III–IV: Terapia sistémica o paliativa  
+[Ver fuente](https://pubmed.ncbi.nlm.nih.gov/24583061/)
+""")
+
     st.write(f"**CLIP Score:** {clip}")
     with st.expander("Interpretación del CLIP"):
-        st.markdown(\"\"\"- 0–1: buen pronóstico  
+        st.markdown("""
+- 0–1: buen pronóstico  
 - 2–3: intermedio  
 - ≥4: mal pronóstico  
-[Ver fuente](https://pubmed.ncbi.nlm.nih.gov/10733537/)\"\"\")
+[Ver fuente](https://pubmed.ncbi.nlm.nih.gov/10733537/)
+""")
