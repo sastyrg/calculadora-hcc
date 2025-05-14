@@ -257,4 +257,4 @@ if st.button("Calcular") and not errores:
     st.markdown("- [MELD-Na Score](https://pubmed.ncbi.nlm.nih.gov/18768945/)")
     st.markdown("- [BCLC](https://www.journal-of-hepatology.eu/article/S0168-8278(24)02508-X/abstract)")
     st.markdown("- [Okuda Score](https://pubmed.ncbi.nlm.nih.gov/2990661/)")
-    st.markdown("- [ART Score](https://pubmed.ncbi.nlm.nih.gov/23316
+    st.markdown("- [ART Score](https://pubmed.ncbi.nlm.nih.gov/23316/)")
